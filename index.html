@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <title>Plade Katalog</title>
+</head>
+<body>
+    <header class="top-header">
+        <div class="header-content">
+            <span class="record-icon">🎵</span>
+            <h1>Plade Katalog</h1>
+        </div>
+    </header>
+
+    <div id="app">
+        <!-- Login Form -->
+
+
+        <div v-if="showLogin" class="login-form">
+            <h2>Login</h2>
+            <input v-model="loginForm.username" placeholder="Brugernavn">
+            <input v-model="loginForm.password" type="password" placeholder="Kodeord">
+            <button @click="login">Log ind</button>
+            <button class="skip-btn" @click="skipLogin">Se plader uden login</button>
+            <div v-if="loginError" class="error">Forkert brugernavn eller kodeord</div>
+        </div>
+
+        <template v-if="!showLogin">
+            <div class="search-bar">
+                <input v-model="searchArtist" placeholder="Søg efter artist...">
+                <input v-model="searchTitle" placeholder="Søg efter titel...">
+                <button v-if="isLoggedIn" @click="adding = true">➕ Tilføj plade</button>
+                <button v-if="isLoggedIn" @click="logout">Log ud</button>
+                <button v-if="!isLoggedIn" class="skip-btn" @click="showLogin = true">Log ind</button>
+            </div>
+
+            <ul class="record-list">
+                <li v-for="record in filteredRecords" :key="record.id" class="record-list-item">
+                    <span class="record-info">
+                        <strong>{{ record.artist }}</strong> - {{ record.title }} ({{ record.publicationYear }})
+                        <span class="duration">{{ record.duration }} sek</span>
+                    </span>
+                    <span class="record-actions" v-if="isLoggedIn">
+                        <button @click="startEdit(record)">Rediger</button>
+                        <button @click="deleteRecord(record.id)">Slet</button>
+                    </span>
+                </li>
+            </ul>
+
+            <!-- Edit Form -->
+            <div v-if="editing" class="edit-form">
+                <h3>Rediger plade</h3>
+                <input v-model="editRecord.artist" placeholder="Artist">
+                <input v-model="editRecord.title" placeholder="Titel">
+                <input v-model.number="editRecord.duration" placeholder="Varighed (sek)">
+                <input v-model.number="editRecord.publicationYear" placeholder="Udgivelsesår">
+                <div class="edit-buttons">
+                    <button @click="saveEdit">Gem</button>
+                    <button @click="cancelEdit">Annuller</button>
+                </div>
+            </div>
+
+            <!-- New Record Form -->
+            <div v-if="adding" class="edit-form">
+                <h3>Tilføj ny plade</h3>
+                <input v-model="newRecord.artist" placeholder="Artist">
+                <input v-model="newRecord.title" placeholder="Titel">
+                <input v-model.number="newRecord.duration" placeholder="Varighed (sek)">
+                <input v-model.number="newRecord.publicationYear" placeholder="Udgivelsesår">
+                <button @click="addRecord">Tilføj plade</button>
+            </div>
+        </template>
+
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
