@@ -90,8 +90,9 @@ Vue.createApp({
             }
         },
 
-        skipLogin() {
+        async skipLogin() {
             this.showLogin = false;
+            await this.fetchRecords();
         },
 
         logout() {
